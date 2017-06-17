@@ -60,10 +60,21 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-		</dependency>
+			</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin><!-- Include if you want to make an executable jar[FAT JAR which 
+					includes all dependencies along with sprinboot loader] that you can run on 
+					commandline using java -jar NAME -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
