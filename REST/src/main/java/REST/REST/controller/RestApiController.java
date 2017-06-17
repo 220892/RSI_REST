@@ -34,7 +34,7 @@ public class RestApiController {
 		if (post != null) {
 			return new ResponseEntity<Post>(post, HttpStatus.OK);
 		}
-		return new ResponseEntity<Post>(post, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@RequestMapping(value = "/all/posts/", method = RequestMethod.GET)
@@ -43,12 +43,16 @@ public class RestApiController {
 		if (posts != null && !posts.isEmpty()) {
 			return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 		}
-		return new ResponseEntity<List<Post>>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	@RequestMapping(value = "/comments/to/post/", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<?> getCommentsToPost(@RequestParam(value="postId") Long postId) {
-		return new ResponseEntity<List<Comment>>(HttpStatus.OK);
+		List<Comment> comments = blogService.getComments(postId);
+		if (comments != null && !comments.isEmpty()) {
+			return new ResponseEntity<List<Comment>>(comments, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	@RequestMapping(value = "/add/post/", method = RequestMethod.POST)
@@ -68,13 +72,19 @@ public class RestApiController {
 	}
 	
 	@RequestMapping(value = "/modify/post/", method = RequestMethod.PUT)
-	public @ResponseBody ResponseEntity<?> modifyPost(@RequestBody Post post) {
-		return new ResponseEntity<>(HttpStatus.OK);
+	public @ResponseBody ResponseEntity<?> modifyPost(@RequestParam(value="postId") Long postId, @RequestBody String text) {
+		if (blogService.modifyPost(postId, text)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
 	@RequestMapping(value = "/modify/comment/", method = RequestMethod.PUT)
-	public @ResponseBody ResponseEntity<?> modifyComment(@RequestBody Comment comment) {
-		return new ResponseEntity<>(HttpStatus.OK);
+	public @ResponseBody ResponseEntity<?> modifyComment(@RequestParam(value="commentId") Long commentId, @RequestBody String text) {
+		if (blogService.modifyComment(commentId, text)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
 	@RequestMapping(value = "/delete/all/", method = RequestMethod.DELETE)

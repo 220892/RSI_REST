@@ -23,6 +23,7 @@ public class BlogServiceImpl implements BlogService {
 	@Autowired
 	private CommentRepository commentRepository;
 	
+	
 	@Override
 	public Post getPost(Long id) {
 		return postRepository.findOne(id);
@@ -31,6 +32,15 @@ public class BlogServiceImpl implements BlogService {
 	@Override
 	public List<Post> getAllPosts() {
 		return postRepository.findAll();
+	}
+	
+	@Override
+	public List<Comment> getComments(Long postId) {
+		Post post = postRepository.findOne(postId);
+		if (post != null) {
+			return post.getComments();
+		}
+		return null;
 	}
 	
 	@Override
@@ -55,11 +65,29 @@ public class BlogServiceImpl implements BlogService {
 	}
 	
 	@Override
+	public boolean modifyPost(Long postId, String text) {
+		Post post = postRepository.findOne(postId);
+		if (post != null) {
+			post.setText(text);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean modifyComment(Long commentId, String text) {
+		Comment comment = commentRepository.findOne(commentId);
+		if (comment != null) {
+			comment.setText(text);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean deleteAll() {
 		postRepository.deleteAll();
 		commentRepository.deleteAll();
 		return true;
 	}
-	
-
 }
