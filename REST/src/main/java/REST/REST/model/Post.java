@@ -56,4 +56,8 @@ public class Post {
 		this.comments = comments;
 	}
 	
+	public void addComment(Comment comment) {
+		comments.add(comment);
+	}
+	
 }

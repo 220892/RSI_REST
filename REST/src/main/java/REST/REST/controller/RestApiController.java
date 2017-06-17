@@ -60,8 +60,11 @@ public class RestApiController {
 	}
 	
 	@RequestMapping(value = "/add/comment/", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> addComment(@RequestBody Comment comment) {
-		return new ResponseEntity<>(HttpStatus.OK);
+	public @ResponseBody ResponseEntity<?> addComment(@RequestParam(value="postId") Long postId, @RequestBody String text) {
+		if (blogService.addNewComment(postId, text)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
 	@RequestMapping(value = "/modify/post/", method = RequestMethod.PUT)
@@ -76,6 +79,9 @@ public class RestApiController {
 	
 	@RequestMapping(value = "/delete/all/", method = RequestMethod.DELETE)
 	public @ResponseBody ResponseEntity<?> deleteAll() {
-		return new ResponseEntity<>(HttpStatus.OK);
+		if (blogService.deleteAll()) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 }
