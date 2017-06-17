@@ -2,6 +2,8 @@ package REST.REST.controller;
 
 import java.util.List;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import REST.REST.model.Comment;
 import REST.REST.model.Post;
 import REST.REST.service.BlogService;
+import REST.REST.to.PostsTO;
 
 @RestController
 @RequestMapping("/api/")
@@ -42,6 +45,26 @@ public class RestApiController {
 		List<Post> posts = blogService.getAllPosts();
 		if (posts != null && !posts.isEmpty()) {
 			return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@RequestMapping(value = "/all/posts/partionally/", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<?> getAllPostsPartionally(@RequestParam(value = "partId", defaultValue = "1") Long partId) {
+		Long pagesNumber = blogService.getPagesNumber();
+		List<Post> posts = blogService.getAllPostsPartionally(partId);
+		if (posts != null && !posts.isEmpty()) {
+			PostsTO postsTO = new PostsTO();
+			postsTO.setPosts(posts);
+			postsTO.add(linkTo(methodOn(RestApiController.class).getAllPostsPartionally(1L)).withRel("first"));
+			if (partId > 2) {
+				postsTO.add(linkTo(methodOn(RestApiController.class).getAllPostsPartionally(partId - 1)).withRel("previous"));
+			}
+			if (partId < pagesNumber - 1) {
+				postsTO.add(linkTo(methodOn(RestApiController.class).getAllPostsPartionally(partId + 1)).withRel("next"));
+			}
+			postsTO.add(linkTo(methodOn(RestApiController.class).getAllPostsPartionally(pagesNumber)).withRel("last"));
+			return new ResponseEntity<PostsTO>(postsTO, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

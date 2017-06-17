@@ -35,6 +35,21 @@ public class BlogServiceImpl implements BlogService {
 	}
 	
 	@Override
+	public List<Post> getAllPostsPartionally(Long partId) {
+		return postRepository.findPart((partId - 1) * 10, (partId - 1) * 10 + 10);
+	}
+	
+	@Override
+	public Long getPostsNumber() {
+		return postRepository.count();
+	}
+	
+	@Override
+	public Long getPagesNumber() {
+		return (postRepository.count() - 1L) / 10 + 1;
+	}
+	
+	@Override
 	public List<Comment> getComments(Long postId) {
 		Post post = postRepository.findOne(postId);
 		if (post != null) {

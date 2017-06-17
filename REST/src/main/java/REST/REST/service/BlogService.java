@@ -9,6 +9,9 @@ import REST.REST.model.Post;
 public interface BlogService {
 	Post getPost(Long id);
 	List<Post> getAllPosts();
+	List<Post> getAllPostsPartionally(Long partId);
+	Long getPostsNumber();
+	Long getPagesNumber();
 	List<Comment> getComments(Long postId);
 	boolean addNewPost(String text);
 	boolean addNewComment(Long postId, String text);
